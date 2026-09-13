@@ -1,2 +1,2 @@
 # tama-chan
-A CLI pet written in Python.
+A tiny terminal pet written in Python.
