@@ -1,4 +1,4 @@
-from state import load_state, save_state
+from state import load_state, save_state, mark_seen
 import pet
 import art
 import fortune
@@ -39,15 +39,19 @@ def main():
 
     if command == "sleep":
         print(pet.sleep(data))
+        mark_seen(data)
 
     elif command == "feed":
         print(pet.feed(data))
+        mark_seen(data)
 
     elif command == "pet":
         print(pet.pet(data))
+        mark_seen(data)
 
     elif command == "play":
         print(pet.play(data))
+        mark_seen(data)
 
     elif command == "fortune":
         print(fortune.get_fortune())
