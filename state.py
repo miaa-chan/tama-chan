@@ -29,7 +29,7 @@ def load_state():
         return default_state()
 
 
-def save_state(data)
+def save_state(data):
     with open(STATE_FILE, "w", encoding="utf-8") as file:
         json_dump(data, f, indent=4)
 
