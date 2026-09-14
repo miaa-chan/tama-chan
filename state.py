@@ -30,10 +30,8 @@ def load_state():
 
 
 def save_state(data)
-    with open(STATE_FILE, "w", enconding="utf-8") as file:
+    with open(STATE_FILE, "w", encoding="utf-8") as file:
         json_dump(data, f, indent=4)
 
 def mark_seen(data):
     data["last_seen"] = datetime.datetime.now().isoformat()
-    with open(STATE_FILE, "w", encoding="utf-8") as file:
-        json.dump(data, file, indent=4)
