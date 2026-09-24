@@ -54,8 +54,7 @@ ART = {
     """,
 }
 
-# Expose each mood as a top-level attribute too (art.happy, art.sleepy, ...)
-# since that's how pet.py and fortune.py actually reach for them nya~
+# Expose each mood as a top-level attribute (art.happy, art.sleepy, ...)
 normal = ART["normal"]
 happy = ART["happy"]
 sleepy = ART["sleepy"]
