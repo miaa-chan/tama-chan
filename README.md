@@ -25,6 +25,8 @@ Current commands:
 `tama feed`
 `tama pet`
 `tama status`
+`tama poke`
+`tama hug`
 
 ## License
 Tama-chan is licensed under Apache 2.0
