@@ -52,6 +52,12 @@ ART = {
        ( ≧◡≦ )
         > ^ <  ☆
     """,
+
+    "annoyed": r"""
+        /\_/\
+       ( ¬_¬ )
+        > ^ <
+    """,
 }
 
 # Expose each mood as a top-level attribute (art.happy, art.sleepy, ...)
@@ -64,3 +70,4 @@ confused = ART["confused"]
 surprised = ART["surprised"]
 loved = ART["loved"]
 excited = ART["excited"]
+annoyed = ART["annoyed"]

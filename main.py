@@ -6,6 +6,17 @@ import sys
 
 WELCOME_BACK_LONG_MIN = 180   # 3 hours
 WELCOME_BACK_SHORT_MIN = 30   # 30 minutes
+HUNGRY_FACE_AT = 70
+
+# commands that act on Tama-chan and return a message to print
+ACTIONS = {
+    "sleep": pet.sleep,
+    "feed": pet.feed,
+    "pet": pet.pet,
+    "play": pet.play,
+    "poke": pet.poke,
+    "hug": pet.hug,
+}
 
 
 def show_status(data, away_minutes=0):
@@ -16,41 +27,30 @@ def show_status(data, away_minutes=0):
 
     if data["sleeping"]:
         print(art.sleepy)
-    elif data["hunger"] >= 70:
+    elif data["hunger"] >= HUNGRY_FACE_AT:
         print(art.sad)
     else:
         print(art.normal)
 
+    # stats are floats internally
     print("Tama-chan's status:")
-    print(f"  hunger:     {data['hunger']}")
-    print(f"  happiness:  {data['happiness']}")
-    print(f"  energy:     {data['energy']}")
+    print(f"  hunger:     {round(data['hunger'])}")
+    print(f"  happiness:  {round(data['happiness'])}")
+    print(f"  energy:     {round(data['energy'])}")
     print(f"  sleeping:   {data['sleeping']}")
 
 
 def main():
     data = load_state()
 
+    # measured BEFORE this visit gets recorded, for the welcome-back message
     away_minutes = pet.minutes_since_last_seen(data)
-    pet.apply_time_decay(data)
-    pet.update_sleep(data)
+    pet.tick(data)
 
-    command = sys.argv[1] if len(sys.argv) > 1 else "status"
+    command = sys.argv[1].lower() if len(sys.argv) > 1 else "status"
 
-    if command == "sleep":
-        print(pet.sleep(data))
-        mark_seen(data)
-
-    elif command == "feed":
-        print(pet.feed(data))
-        mark_seen(data)
-
-    elif command == "pet":
-        print(pet.pet(data))
-        mark_seen(data)
-
-    elif command == "play":
-        print(pet.play(data))
+    if command in ACTIONS:
+        print(ACTIONS[command](data))
         mark_seen(data)
 
     elif command == "fortune":
@@ -62,7 +62,7 @@ def main():
     else:
         print(art.confused)
         print(f"Tama-chan tilts her head, confused. Unknown command: {command}")
-        print("Try: status, feed, pet, play, sleep, fortune")
+        print("Try: status, feed, pet, play, sleep, fortune, poke, hug")
 
     save_state(data)
 
