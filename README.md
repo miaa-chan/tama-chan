@@ -36,7 +36,6 @@ Current commands:
 `tama achievements`
 `tama trick`
 
-She gets hungrier and more tired over time while she's awake, so check in on her!
 Sleeping takes about an hour, and nothing changes while she naps.
 Tired Tama-chan won't play, and doesn't appreciate pokes or hugs.
 
