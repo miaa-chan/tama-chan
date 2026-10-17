@@ -243,7 +243,7 @@ def trick(data):
     if data["energy"] <= TIRED_THRESHOLD:
         print(art.annoyed)
         data["happiness"] = _clamp(data["happiness"] - 2)
-        return "Tama-chan is too tired to go trick-n-treating."
+        return "Tama-chan is too tired to go trick-or-treating."
 
     if TRICK_DICE == 1:
         print (art.happy)
