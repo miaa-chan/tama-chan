@@ -17,6 +17,7 @@ def default_state():
         "sleep_started": None,
         "last_seen": now,
         "last_tick": now,
+        "candy": 0,
     }
 
 

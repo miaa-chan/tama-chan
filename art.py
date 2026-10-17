@@ -60,7 +60,6 @@ ART = {
     """,
 }
 
-# Expose each mood as a top-level attribute (art.happy, art.sleepy, ...)
 normal = ART["normal"]
 happy = ART["happy"]
 sleepy = ART["sleepy"]

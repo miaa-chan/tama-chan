@@ -6,14 +6,18 @@ import art
 SLEEP_DURATION = 60 * 60
 
 # how fast Tama-chan's needs drift while she's awake and unattended
-HUNGER_RATE_PER_MIN = 1 / 5               # +1 hunger every 5 minutes awake
-ENERGY_RATE_PER_MIN = 1 / 7               # -1 energy every 7 minutes awake
+HUNGER_RATE_PER_MIN = 1 / 10               # +1 hunger every 10 minutes awake
+ENERGY_RATE_PER_MIN = 1 / 15               # -1 energy every 15 minutes awake
 NEGLECT_HAPPINESS_RATE_PER_MIN = 1 / 20   # happiness decreases if she's left starving
 NEGLECT_HUNGER_LEVEL = 80
 
 SLEEPY_BELOW = 70            # she only agrees to sleep under this energy
 LOW_ENERGY_THRESHOLD = 15    # too tired to play
 TIRED_THRESHOLD = 30         # too tired to be poked or hugged
+
+# dices 
+TRICK_DICE = random.randint(0, 1)
+CANDY_DICE = random.randint(0, 1)
 
 # command responses
 FEED_MESSAGES = [
@@ -47,7 +51,27 @@ HUG_MESSAGES = [
     "Tama-chan snuggles into the hug. >w<",
 ]
 
+# If trick dice's value is 1
+GOOD_TRICK_MESSAGES = [
+    "Tama-chan went trick-or-treating. She got some candy. :3",
+    "Tama-chan found a house giving a lot of candy and got a whole handful of it. :3",
+]
 
+# If trick dice's value is 0
+BAD_TRICK_MESSAGES = [
+    "Tama-chan went trick-or-treating. Nobody answered the door. :<",
+    "Tama-chan went trick-or-treating. The house was empty. :<",
+    "Tama-chan went trick-or-treating. She knocked... nothing. She returns disappointed. :<",
+    "Tama-chan went trick-or-treating. She got scared by a Halloween decoration and ran away.",
+]
+
+CANDY_MESSAGES = [
+    "Tama-chan happily eats her obtained candy. :3",
+    "Nom nom nom~ Tama-chan is satisfied with the candy.",
+    "Tama-chan devours the candy in record time!",
+]
+
+# maximum and minimum values
 def _clamp(value, low=0, high=100):
     return max(low, min(high, value))
 
@@ -122,9 +146,16 @@ def feed(data):
         print(art.shy)
         return "Tama-chan isn't hungry yet."
 
-    data["hunger"] = _clamp(data["hunger"] - 10)
-    print(art.happy)
-    return random.choice(FEED_MESSAGES)
+    if (CANDY_DICE == 1) and (data["candy"] > 0):
+        data["hunger"] = _clamp(data["hunger"] - 10)
+        data["candy"] = (data["candy"] - 1)
+        print(art.happy)
+        return random.choice(CANDY_MESSAGES)
+
+    else:
+        data["hunger"] = _clamp(data["hunger"] - 10)
+        print(art.happy)
+        return random.choice(FEED_MESSAGES)
 
 
 # pet
@@ -180,11 +211,11 @@ def poke(data):
 
     if data["energy"] <= TIRED_THRESHOLD:
         print(art.annoyed)
-        data["happiness"] = _clamp(data["happiness"] - 5)
+        data["happiness"] = _clamp(data["happiness"] - 2)
         return "You poked Tama-chan. She looks annoyed. She's too tired for this right now."
 
     print(art.happy)
-    data["happiness"] = _clamp(data["happiness"] + 10)
+    data["happiness"] = _clamp(data["happiness"] + 5)
     return random.choice(POKE_MESSAGES)
 
 
@@ -196,9 +227,30 @@ def hug(data):
 
     if data["energy"] <= TIRED_THRESHOLD:
         print(art.annoyed)
-        data["happiness"] = _clamp(data["happiness"] - 10)
+        data["happiness"] = _clamp(data["happiness"] - 2)
         return "Tama-chan doesn't want any hugs. She's sleepy."
 
     print(art.loved)
-    data["happiness"] = _clamp(data["happiness"] + 20)
+    data["happiness"] = _clamp(data["happiness"] + 5)
     return random.choice(HUG_MESSAGES)
+
+# trick
+def trick(data):
+    asleep = _sleeping_reply(data)
+    if asleep:
+        return asleep
+
+    if data["energy"] <= TIRED_THRESHOLD:
+        print(art.annoyed)
+        data["happiness"] = _clamp(data["happiness"] - 2)
+        return "Tama-chan is too tired to go trick-n-treating."
+
+    if TRICK_DICE == 1:
+        print (art.happy)
+        data["happiness"] = _clamp(data["happiness"] + 5)
+        data["candy"] = (data["candy"] + 3)
+        return random.choice(GOOD_TRICK_MESSAGES)
+    else:
+        print(art.sad)
+        data["happiness"] = _clamp(data["happiness"] - 5)
+        return random.choice(BAD_TRICK_MESSAGES)
