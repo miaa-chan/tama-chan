@@ -87,6 +87,7 @@ def main():
         "now": datetime.datetime.now(),
     })
 
+    ach["candy"] = max(0, min(64, ach["candy"]))
     data["candy"] = ach["candy"]
 
     if command == "achievements":
