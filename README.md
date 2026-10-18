@@ -1,4 +1,4 @@
-# tama-chan
+# Tama-chan
 
 A tiny terminal Tamagotchi. She gets hungry, she gets sleepy, and she notices when you're gone. :3
 
@@ -53,6 +53,9 @@ minutes apart.
 
 `make uninstall` removes the program but keeps her save files (`state.json` and `achievements.json`).
 `make purge` removes everything, including her. She will be gone forever. :(
+
+## Roadmap
+You can view the roadmap [here](ROADMAP.md)
 
 ## License
 Tama-chan is licensed under Apache 2.0
