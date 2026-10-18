@@ -46,6 +46,14 @@ def _repair(loaded):
         else:
             state[key] = defaults[key]
 
+    # candy is a whole number from 0-64; anything else resets back to 0
+    candy = state["candy"]
+    if _is_number(candy) and math.isfinite(candy):
+        state["candy"] = max(0, min(64, int(candy)))
+    else:
+        state["candy"] = defaults["candy"]
+
+    # sleep checker
     if not isinstance(state["sleeping"], bool):
         state["sleeping"] = False
 
