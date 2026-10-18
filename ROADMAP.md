@@ -6,7 +6,7 @@ Here's all the planned updates for this year:
 ✅ v1.2 - Halloween update
 
 ## November
-Bug fixes only, will be too busy that month :(
+Bug fixes and QOL updates only, will be too busy that month :(
 ## December
 * v1.3 -  Christmas update (TUI added here)
 * v1.4 - New Year update
