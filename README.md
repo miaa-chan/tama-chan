@@ -10,6 +10,9 @@ Clone repository by downloading it as a .zip file or by using:
 Change directory and install Tama-chan:
 `make install`
 
+:warning: Make sure you're in, for example, `/home/user/Downloads/tama-chan/src`,
+the [Makefile](src/Makefile) is located there.
+
 Do NOT run it with sudo. The Makefile asks for your password itself only for
 the one step that needs it (the launcher in `/bin`). If the whole thing runs as
 root, `$HOME` becomes `/root` and her files end up somewhere you can't read.
