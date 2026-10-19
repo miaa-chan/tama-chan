@@ -61,5 +61,5 @@ minutes apart.
 You can view the roadmap [here](ROADMAP.md)
 
 ## License
-Tama-chan is licensed under Apache 2.0
-See [LICENSE](LICENSE) for the full text.
+Tama-chan is licensed under Apache 2.0,
+see [LICENSE](LICENSE) for the full text.
