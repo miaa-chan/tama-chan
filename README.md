@@ -62,4 +62,4 @@ You can view the roadmap [here](ROADMAP.md)
 
 ## License
 Tama-chan is licensed under Apache 2.0
-See LICENSE for the full text.
+See [LICENSE](LICENSE) for the full text.
