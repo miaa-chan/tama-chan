@@ -2,13 +2,14 @@
 # Do NOT run the whole `make install` under sudo, because
 # that would make $(HOME) resolve to /root instead of your real home dir
 # and leave the python files owned by root, unreadable at runtime.
+
 ifneq ($(SUDO_USER),)
 $(error Don't run this with sudo. Run plain 'make $(MAKECMDGOALS)'; it asks for your password itself, only where needed)
 endif
 
 BINDIR ?= /bin
 DATADIR := $(HOME)/.config/tama-chan
-FILES := main.py pet.py state.py art.py fortune.py achievements.py
+FILES := main.py pet.py state.py art.py fortune.py achievements.py update.py
 
 # Root already? Doing a staged/packaged install via DESTDIR? Then don't sudo.
 SUDO := $(shell if [ -z "$(DESTDIR)" ] && [ "$$(id -u)" != "0" ]; then echo sudo; fi)
