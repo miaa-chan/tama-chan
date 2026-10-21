@@ -1,3 +1,6 @@
+# Tama-chan's fortune file.
+# All of her fortunes are stored here.
+
 import random
 import art
 
