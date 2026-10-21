@@ -1,3 +1,6 @@
+# Tama-chan's achievements file.
+# Responsible for storing all of the current achievements.
+
 import datetime
 import json
 import os
