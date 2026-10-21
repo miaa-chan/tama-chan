@@ -1,3 +1,6 @@
+# Tama-chan's main file.
+# Coordinates everything from the other files.
+
 from state import load_state, save_state, mark_seen
 import achievements
 import pet
