@@ -1,4 +1,5 @@
 # Tama-chan's updater
+# Updates Tama-chan... that's it :3
 
 import os
 import shutil
