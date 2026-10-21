@@ -70,6 +70,10 @@ def main():
     elif command == "achievements":
         print(art.normal)
 
+    elif command == "version":
+        print(art.normal)
+        print(f"Tama-chan v1.2.2")
+
     else:
         print(art.confused)
         print(f"Tama-chan tilts her head, confused. Unknown command: {command}")
