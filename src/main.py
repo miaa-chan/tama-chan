@@ -64,29 +64,31 @@ def main():
         print(ACTIONS[command](data))
         mark_seen(data)
 
-    elif command == "fortune":
-        print(fortune.get_fortune())
+        elif command == "fortune":
+            print(fortune.get_fortune())
 
-    elif command == "status":
-        show_status(data, away_minutes)
+        elif command == "status":
+            show_status(data, away_minutes)
 
-    elif command == "achievements":
-        print(art.normal)
+        elif command == "achievements":
+            print(art.normal)
 
-    elif command == "version":
-        print(art.normal)
-        print(f"Tama-chan v{VERSION}")
+        elif command == "version":
+            print(art.normal)
+            print(f"Tama-chan v{VERSION}")
 
-    elif command == "update":
-        update.run()
-        return
+        elif command == "update":
+            update.run()
+            return
 
-    else:
-        print(art.confused)
-        print(f"Tama-chan tilts her head, confused. Unknown command: {command}")
-        print("Try: status, feed, pet, play, sleep, fortune, poke, hug, trick, achievements")
-        command = "unknown"
-        away_minutes = 0
+        else:
+            print(art.confused)
+            print(f"Tama-chan tilts her head, confused. Unknown command: {command}")
+            print("Try: status, feed, pet, play, sleep, fortune, poke, hug, trick, achievements")
+            command = "unknown"
+
+    if command not in ACTIONS:
+        away_minutes = 0    # to prevent farming visits
 
     # one candy pool: the pet's candy is what achievements pay into and feed spends
     ach["candy"] = data.get("candy", 0)
