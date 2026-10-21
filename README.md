@@ -38,6 +38,8 @@ Current commands:
 `tama fortune`
 `tama achievements`
 `tama trick`
+`tama version`
+`tama update`
 
 Sleeping takes about an hour, and nothing changes while she naps.
 Tired Tama-chan won't play, and doesn't appreciate pokes or hugs.
