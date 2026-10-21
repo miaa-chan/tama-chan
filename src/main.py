@@ -2,6 +2,7 @@ from state import load_state, save_state, mark_seen
 import achievements
 import pet
 import art
+import update
 import fortune
 import datetime
 import sys
@@ -75,6 +76,10 @@ def main():
     elif command == "version":
         print(art.normal)
         print(f"Tama-chan v{VERSION}")
+
+    elif command == "update":
+        update.run()
+        return
 
     else:
         print(art.confused)
