@@ -1,3 +1,6 @@
+# Tama-chan's art file.
+# Every ASCII used by Tama-chan is stored here.
+
 ART = {
     "normal": r"""
         /\_/\
