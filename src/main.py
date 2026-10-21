@@ -101,6 +101,7 @@ def main():
         "after": data,
         "away_minutes": away_minutes,
         "woke": woke,
+        "is_action": command in ACTIONS,
         "now": datetime.datetime.now(),
     })
 
