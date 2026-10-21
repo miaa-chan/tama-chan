@@ -1,3 +1,6 @@
+# Tama-chan's state file.
+# Responsible of handling Tama-chan's saves.
+
 import datetime
 import json
 import math
