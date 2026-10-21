@@ -6,6 +6,8 @@ import fortune
 import datetime
 import sys
 
+VERSION = 1.2.2
+
 WELCOME_BACK_LONG_MIN = 180   # 3 hours
 WELCOME_BACK_SHORT_MIN = 30   # 30 minutes
 HUNGRY_FACE_AT = 70
@@ -72,7 +74,7 @@ def main():
 
     elif command == "version":
         print(art.normal)
-        print(f"Tama-chan v1.2.2")
+        print(f"Tama-chan v{VERSION}")
 
     else:
         print(art.confused)
