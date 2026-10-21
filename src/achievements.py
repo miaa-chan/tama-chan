@@ -258,7 +258,7 @@ def _met(defn, ach, ctx):
 def record(ach, event, ctx=None):
     """Record one visit/command and return the ids of newly unlocked achievements.
 
-    event: the command name ("feed", "pet", ... or "unknown")
+    event: the command name ("feed", "pet", ...)
     ctx (all optional):
         before / after  - Tama-chan's state dict from before and after the command
         away_minutes    - how long you were gone (visits need a gap, see VISIT_GAP_MIN)
@@ -277,7 +277,8 @@ def record(ach, event, ctx=None):
         _bump(ach, "woke")
     if _was_rude(event, ctx):
         _bump(ach, "annoyed")
-    _update_streak(ach, now.date())
+    if ctx.get("is_action", True):
+        _update_streak(ach, now.date())
 
     newly_unlocked = []
     for achievement_id, defn in ACHIEVEMENTS.items():
