@@ -86,6 +86,7 @@ def main():
         print(f"Tama-chan tilts her head, confused. Unknown command: {command}")
         print("Try: status, feed, pet, play, sleep, fortune, poke, hug, trick, achievements")
         command = "unknown"
+        away_minutes = 0
 
     # one candy pool: the pet's candy is what achievements pay into and feed spends
     ach["candy"] = data.get("candy", 0)
