@@ -1,3 +1,6 @@
+# Tama-chan's logic file.
+# Every command (except "version" and "update") are defined here. They then get defined in main.py.
+
 import datetime
 import random
 import time
