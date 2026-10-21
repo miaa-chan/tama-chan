@@ -17,7 +17,7 @@ def run():
         try:
             subprocess.run(["git", "clone", "--depth", "1", "-q", REPO, tmp],
                            check=True, timeout=60, env=env)
-            subprocess.run(["make", "install-data"], cwd=tmp, check=True)
+            subprocess.run(["make", "install-data"], cwd=os.path.join(tmp, "src"), check=True)
         except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
             print("Update failed... her old files are safe though! :<")
             return
