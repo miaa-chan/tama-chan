@@ -12,8 +12,8 @@ NEGLECT_HAPPINESS_RATE_PER_MIN = 1 / 20   # happiness decreases if she's left st
 NEGLECT_HUNGER_LEVEL = 80
 
 SLEEPY_BELOW = 70            # she only agrees to sleep under this energy
-LOW_ENERGY_THRESHOLD = 15    # too tired to play
-TIRED_THRESHOLD = 30         # too tired to be poked or hugged
+LOW_ENERGY_THRESHOLD = 30    # too tired to play
+TIRED_THRESHOLD = 20         # too tired to be poked or hugged
 
 # dices 
 TRICK_DICE = random.randint(0, 1)
