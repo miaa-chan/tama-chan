@@ -10,7 +10,7 @@ import fortune
 import datetime
 import sys
 
-VERSION = "1.2.2"
+VERSION = "b1.3.0"
 
 WELCOME_BACK_LONG_MIN = 180   # 3 hours
 WELCOME_BACK_SHORT_MIN = 30   # 30 minutes
