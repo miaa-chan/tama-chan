@@ -9,7 +9,7 @@ endif
 
 BINDIR ?= /bin
 DATADIR := $(HOME)/.config/tama-chan
-FILES := main.py pet.py state.py art.py fortune.py achievements.py update.py
+FILES := main.py pet.py state.py art.py fortune.py achievements.py update.py tui.py
 
 # Root already? Doing a staged/packaged install via DESTDIR? Then don't sudo.
 SUDO := $(shell if [ -z "$(DESTDIR)" ] && [ "$$(id -u)" != "0" ]; then echo sudo; fi)
