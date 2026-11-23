@@ -49,7 +49,7 @@ def show_status(data, away_minutes=0):
     print(f"  sleeping:   {data['sleeping']}")
 
 
-def main():
+def run_command(command):
     data = load_state()
     ach = achievements.load_achievements()
 
@@ -59,8 +59,6 @@ def main():
     was_sleeping = data["sleeping"]
     pet.tick(data)
     woke = was_sleeping and not data["sleeping"]
-
-    command = sys.argv[1].lower() if len(sys.argv) > 1 else "status"
     before = dict(data)  # her state on arrival, so achievements can tell what changed
 
     if command in ACTIONS:
@@ -118,6 +116,15 @@ def main():
     save_state(data)
     achievements.save_achievements(ach)
 
+def main():
+    command = sys.argv[1].lower() if len(sys.argv) > 1 else None
+
+    if command is None:
+        if sys.stdin.isatty() and sys.stdout.isatty():
+            import tui
+            tui.run(run_command)
+            return
+        command = "status"
 
 if __name__ == "__main__":
     main()
