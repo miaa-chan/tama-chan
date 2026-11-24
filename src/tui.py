@@ -10,12 +10,13 @@ import io
 import locale
 import textwrap
 import time
+from types import SimpleNamespace
 import achievements
 import art
 import pet
 from state import load_state
 
-# lets the terminal draw unicode in general
+# lets the terminal draw unicode
 locale.setlocale(locale.LC_ALL, "")
 
 HUNGRY_FACE_AT = 70      # same value as in main.py
@@ -26,7 +27,7 @@ MIN_H, MIN_W = 20, 60    # smaller than this -> "too small" message
 LOG_LIMIT = 200          # log lines kept in memory
 TOP_H = 9                # height of the top row of boxes
 
-# key -> command (the names of the commands in main.py)
+# key -> command
 KEYS = {
     ord("f"): "feed",
     ord("p"): "pet",
@@ -39,20 +40,26 @@ KEYS = {
 }
 FOOTER = " f feed  p pet  l play  s sleep  k poke  h hug  t trick  o fortune  q quit"
 
-# color pairs
-GREEN, YELLOW, RED, PINK, DIM = 1, 2, 3, 4, 5
+# theme: name -> (256-color number, fallback for 8-color terminals).
+THEME = {
+    "good":   (curses.COLOR_GREEN,  curses.COLOR_GREEN),
+    "warn":   (curses.COLOR_YELLOW, curses.COLOR_YELLOW),
+    "bad":    (curses.COLOR_RED,    curses.COLOR_RED),
+    "accent": (213,                 curses.COLOR_MAGENTA),
+    "dim":    (curses.COLOR_CYAN,   curses.COLOR_CYAN),
+}
+PAIRS = {name: i for i, name in enumerate(THEME, start=1)}
+GREEN, YELLOW, RED, PINK, DIM = (PAIRS[n] for n in ("good", "warn", "bad", "accent", "dim"))
 
 
 def init_colors():
     curses.start_color()
     curses.use_default_colors()
-    pink = 213 if curses.COLORS >= 256 else curses.COLOR_MAGENTA
-    colors = (curses.COLOR_GREEN, curses.COLOR_YELLOW, curses.COLOR_RED, pink, curses.COLOR_CYAN)
-    for pair, color in enumerate(colors, start=1):
-        curses.init_pair(pair, color, -1)
+    for name, (big, small) in THEME.items():
+        curses.init_pair(PAIRS[name], big if curses.COLORS >= 256 else small, -1)
 
 
-# small drawing helpers :3
+# small drawing helpers
 def put(win, y, x, text, pair=0):
     height, width = win.getmaxyx()
     if y < 0 or y >= height or x < 0 or x >= width:
@@ -87,8 +94,7 @@ def level_color(value, bad_when_high=False):
     return RED
 
 
-# which face is she making? idk, so this code here resolves our doubt, probably, pls help me
-
+# determines tama-chan's expression
 def idle_face(data):
     if data["sleeping"]:
         return "sleepy"
@@ -98,11 +104,9 @@ def idle_face(data):
 
 
 def run_captured(run_command, command):
-    """Run a command with stdout captured, so print() can't mess up the screen.
+    """Run a command with stdout captured, so print() doesn't cause issues.
     Returns (reaction_face, text). The face is whichever sprite from art.ART
-    the command printed; it's removed from the text so only messages are left.
-    """
-
+    the command printed; it's removed from the text so only messages are left."""
     buf = io.StringIO()
     with contextlib.redirect_stdout(buf):
         run_command(command)
@@ -126,9 +130,10 @@ def add_log(log, text):
 
 # panels
 
-def draw_sprite_panel(win, y, x, h, w, face):
+def panel_sprite(win, rect, ctx):
+    y, x, h, w = rect
     draw_box(win, y, x, h, w, "tama", PINK)
-    lines = textwrap.dedent(art.ART[face]).strip("\n").splitlines()
+    lines = textwrap.dedent(art.ART[ctx.face]).strip("\n").splitlines()
     art_w = max(len(line) for line in lines)
     top = y + (h - len(lines)) // 2
     left = x + (w - art_w) // 2
@@ -136,7 +141,9 @@ def draw_sprite_panel(win, y, x, h, w, face):
         put(win, top + i, left, line, PINK)
 
 
-def draw_stats_panel(win, y, x, h, w, data):
+def panel_stats(win, rect, ctx):
+    y, x, h, w = rect
+    data = ctx.data
     draw_box(win, y, x, h, w, "stats", PINK)
     gauge_w = max(5, w - 2 - 11 - 5 - 2)   # borders, label, number, margins
 
@@ -160,7 +167,9 @@ def draw_stats_panel(win, y, x, h, w, data):
         put(win, y + 6, x + 2, "awake", DIM)
 
 
-def draw_achievements_panel(win, y, x, h, w, ach, scroll):
+def panel_achievements(win, rect, ctx):
+    y, x, h, w = rect
+    ach = ctx.ach
     total = len(achievements.ACHIEVEMENTS)
     draw_box(win, y, x, h, w, f"achievements {len(ach['unlocked'])}/{total}", PINK)
 
@@ -178,17 +187,18 @@ def draw_achievements_panel(win, y, x, h, w, ach, scroll):
             rows.append((text, 0))
 
     visible = h - 2
-    scroll = max(0, min(scroll, len(rows) - visible))
+    scroll = max(0, min(ctx.scroll, len(rows) - visible))
     for i, (text, pair) in enumerate(rows[scroll: scroll + visible]):
         put(win, y + 1 + i, x + 2, text[: w - 4], pair)
-    return scroll   # clamped, so main loop doesn't continue past the end
+    ctx.scroll = scroll   # clamped, so the main loop can't continue past the end :3
 
 
-def draw_log_panel(win, y, x, h, w, log):
+def panel_log(win, rect, ctx):
+    y, x, h, w = rect
     draw_box(win, y, x, h, w, "log", PINK)
     inner = w - 4
     wrapped = []
-    for entry in log:
+    for entry in ctx.log:
         pair = PINK if "★" in entry else 0
         for line in textwrap.wrap(entry, inner) or [""]:
             wrapped.append((line, pair))
@@ -196,7 +206,41 @@ def draw_log_panel(win, y, x, h, w, log):
         put(win, y + 1 + i, x + 2, line, pair)
 
 
+PANELS = {
+    "sprite": panel_sprite,
+    "stats": panel_stats,
+    "achievements": panel_achievements,
+    "log": panel_log,
+}
+
+# rows, top to bottom: (height or None = "everything that's left", [(panel, weight), ...])
+LAYOUT = [
+    (TOP_H, [("sprite", 1), ("stats", 1)]),
+    (None,  [("achievements", 1), ("log", 1)]),
+]
+
+
+def compute_rects(layout, height, width):
+    """Turn LAYOUT into {panel_name: (y, x, h, w)}."""
+    rects = {}
+    fixed = sum(h for h, _ in layout if h is not None)
+    free_rows = sum(1 for h, _ in layout if h is None)
+    rest = (height - fixed) // max(1, free_rows)
+    y = 0
+    for row_h, panels in layout:
+        row_h = rest if row_h is None else row_h
+        total = sum(weight for _, weight in panels)
+        x = 0
+        for i, (name, weight) in enumerate(panels):
+            w = width - x if i == len(panels) - 1 else width * weight // total
+            rects[name] = (y, x, row_h, w)
+            x += w
+        y += row_h
+    return rects
+
+
 # the main loop
+
 def run(run_command):
     curses.wrapper(_main, run_command)
 
@@ -204,13 +248,13 @@ def run(run_command):
 def _main(stdscr, run_command):
     curses.curs_set(0)
     init_colors()
-    stdscr.timeout(FRAME_MS)
+    stdscr.timeout(FRAME_MS)   # redraw even with no key
 
     log = []
     reaction, reaction_until = None, 0.0
     scroll = 0
 
-    # opening the TUI counts as a visit.
+    # opening the TUI counts as a visit
     # only the welcome-back line goes to the log (the panels already show the stats).
     _, text = run_captured(run_command, "status")
     add_log(log, "\n".join(
@@ -219,6 +263,8 @@ def _main(stdscr, run_command):
     ))
 
     while True:
+        # the screen is a throwaway copy of what's on disk: tick() here is never saved,
+        # only actions (via run_command) write, so other terminals can't be clobbered
         data = load_state()
         pet.tick(data)
         ach = achievements.load_achievements()
@@ -234,20 +280,18 @@ def _main(stdscr, run_command):
             else:
                 face = idle_face(data)
 
-            left_w = width // 2
-            bottom_h = height - TOP_H - 1
-
-            draw_sprite_panel(stdscr, 0, 0, TOP_H, left_w, face)
-            draw_stats_panel(stdscr, 0, left_w, TOP_H, width - left_w, data)
-            scroll = draw_achievements_panel(stdscr, TOP_H, 0, bottom_h, left_w, ach, scroll)
-            draw_log_panel(stdscr, TOP_H, left_w, bottom_h, width - left_w, log)
+            ctx = SimpleNamespace(data=data, ach=ach, face=face, log=log,
+                                  scroll=scroll, frame=int(time.time() * 4))
+            for name, rect in compute_rects(LAYOUT, height - 1, width).items():
+                PANELS[name](stdscr, rect, ctx)
+            scroll = ctx.scroll   # the achievements panel clamps it
             put(stdscr, height - 1, 0, FOOTER, DIM)
 
         stdscr.refresh()
 
         key = stdscr.getch()   # -1 when it times out
         if 0 < key < 256:
-            key = ord(chr(key).lower())   # so caps lock doesn't break things
+            key = ord(chr(key).lower())   # so caps lock doesn't break things >.>
 
         if key == ord("q"):
             break
